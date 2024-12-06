@@ -30,7 +30,7 @@ const pluginConfig = (ctx: IPicGo): IPluginConfig[] => {
             name: 'secondFileType',
             type: 'list',
             message: '选择优先使用的图片类型在不支持解码的情况下的备选图片类型',
-            choices: _choices.filter(p => p.value !== conf?.firstFileType),
+            choices: _choices,
             default: conf?.secondFileType || FileType.avif,
             required: false,
         }, {
@@ -38,7 +38,7 @@ const pluginConfig = (ctx: IPicGo): IPluginConfig[] => {
             name: 'thirdFileType',
             type: 'list',
             message: '选择优先使用的图片类型在不支持解码的情况下的备选图片类型',
-            choices: _choices.filter(p => p.value !== conf?.firstFileType && p.value !== conf?.secondFileType),
+            choices: _choices,
             default: conf?.thirdFileType || FileType.avif,
             required: false,
         },
@@ -115,7 +115,7 @@ const transformer: IPlugin = {
                     extname: originFileName,
                     _packInfo: transformTypes
                 });
-                ctx.log.success(`压缩插件输出原图成功，文件名为${originFileName}`);
+                ctx.log.success(`压缩插件输出原图成功，文件名为[${originFileName}]`);
 
                 //* 输出压缩图
                 await Promise.all(
@@ -132,7 +132,7 @@ const transformer: IPlugin = {
                             _isSubImage: true, // 这里额外开了一个键记录，方便后面在afterUploadPlugins删掉
                             _sourceFileName: originFileName
                         });
-                        ctx.log.success(`压缩插件输出图片格式[${t.toFormat}]成功，文件名为${t.newFileName}`);
+                        ctx.log.success(`压缩插件输出图片格式[${t.toFormat}]成功，文件名为[${t.newFileName}]`);
                     })
                 );
                 //* End Output
@@ -197,8 +197,14 @@ const afterUploadPlugins: IPlugin = {
         else if (config.outputFormat === OutputFormat.html) {
             ctx.log.info(`输出html格式`);
             ctx.output = ctx.output.concat(outputPackinfo.map(info => {
-                const sources: string = info._packInfo.imageList.map(p => `<source srcSet="${p.imgUrl}" type="${p.imgWebType}"/>`).join();
-                return `<picture>${sources}<img src="${info._packInfo.sourceImageUrl}"/></picture>`
+                const sources: string = info._packInfo.imageList.map(p => `<source srcSet="${p.imgUrl}" type="${p.imgWebType}"/>`).join('');
+                const html =  `<picture>${sources}<img src="${info._packInfo.sourceImageUrl}"/></picture>`;
+                const {
+                    _packInfo: _,
+                    ...newInfo
+                } = info;
+                newInfo.imgUrl = html;
+                return newInfo;
             }));
         } else if (config.outputFormat === OutputFormat.url) {
             ctx.log.info(`输出不带自定义信息的url格式`);
