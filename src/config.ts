@@ -16,18 +16,18 @@ export type FileTypeForSharp = FileType.avif | FileType.webp | FileType.jpeg | F
 // TODO: HDR Support
 
 export interface IFileTypeInfo {
-    alias: string,
-    extname: string | null,
-    webType: string | null,
+    alias: string
+    extname: string | null
+    webType: string | null
     otherExtnames?: string[]
 }
 
 export interface IFileTypeMap {
-    [key: string]: IFileTypeInfo;
+    [key: string]: IFileTypeInfo
 }
 
 export const FileTypeMap: IFileTypeMap = {
-    [FileType.raw]: { alias: '原图', extname: null, webType: null },
+    [FileType.raw]: { alias: '原图格式', extname: null, webType: null },
     [FileType.none]: { alias: '不使用', extname: null, webType: null },
     [FileType.avif]: { alias: 'avif', extname: '.avif', webType: 'image/avif' },
     [FileType.webp]: { alias: 'webp', extname: '.webp', webType: 'image/webp' },
@@ -39,8 +39,8 @@ export const FileTypeMap: IFileTypeMap = {
     [FileType.tiff]: { alias: 'tiff', extname: '.tiff', webType: 'image/tiff' } // TODO
 }
 
-export const getFileTypeFromExtname = (extname: string): FileType => {
-    return Object.keys(FileType).find(p => FileTypeMap[p].extname == extname || FileTypeMap[p].otherExtnames?.includes(extname)) as FileType;
+export const getFileTypeFromExtname = (extname: string): FileTypeForSharp => {
+    return Object.keys(FileType).find(p => FileTypeMap[p].extname == extname || FileTypeMap[p].otherExtnames?.includes(extname)) as FileTypeForSharp;
 };
 
 export enum OutputFormat {
@@ -50,10 +50,17 @@ export enum OutputFormat {
 }
 
 export interface IConfig {
-    firstFileType: FileType,
-    secondFileType?: FileType,
-    thirdFileType?: FileType,
+    firstFileType: FileType
+    secondFileType?: FileType
+    thirdFileType?: FileType
     outputFormat: OutputFormat
-    //whenSameType
+    saveFirst: boolean
+    qualityOfAvif: string
+    qualityOfWebp: string
+    qualityOfJpeg: string
+    qualityOfHeif: string
+    losslessAvif: boolean
+    losslessHeif: boolean
+    skipSourceFileType: boolean
     //hanleHdr
 }

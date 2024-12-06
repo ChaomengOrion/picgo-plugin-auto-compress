@@ -9,23 +9,23 @@ export interface IImgSize {
 }
 
 export interface ITransformInfo {
-    newFileName: string,
-    newExtname: string,
+    newFileName: string
+    newExtname: string
     toFormat: FileTypeForSharp
 }
 
 export interface ICustomImgInfo extends IImgInfo {
-    _isSubImage?: boolean,
-    _packInfo?: ITransformInfo[],
+    _isSubImage?: boolean
+    _packInfo?: ITransformInfo[]
     _sourceFileName?: string
 }
 
 export interface IPackImgInfo extends IImgInfo {
     _packInfo: {
         imageList: {
-            imgUrl: string,
+            imgUrl: string
             imgWebType: string
-        }[],
+        }[]
         sourceImageUrl: string
     }
 }
