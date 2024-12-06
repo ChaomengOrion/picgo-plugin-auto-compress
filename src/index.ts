@@ -1,4 +1,4 @@
-import { IPicGo, IPathTransformedImgInfo, IPluginConfig, IPlugin, IImgSize } from 'picgo'
+import { IPicGo, IPathTransformedImgInfo, IPluginConfig, IPlugin, IImgSize, IImgInfo } from 'picgo'
 import sharp from 'sharp';
 ////import fs from 'fs';
 ////import path from 'path';
@@ -88,7 +88,7 @@ const transformer: IPlugin = {
                 //* Begin Output
                 const imgSize: IImgSize = getImgSize(ctx, info.buffer, item);
                 const originExtname = info.extname || imgSize.extname || '.png';
-                let originFileName: string = info.fileName;
+                let originFileName = info.fileName;
 
                 if (!originFileName) {
                     originFileName = `${dayjs().format('YYYYMMDDHHmmssSSS')}${originExtname}`;
@@ -101,8 +101,8 @@ const transformer: IPlugin = {
                 const transformTypes: ITransformInfo[] = [config.firstFileType, config.secondFileType, config.thirdFileType]
                     .filter(p => p && p != originFileType && p != FileType.none && p != FileType.raw) // TODO: 压缩原图
                     .map(type => ({
-                        newExtname: FileTypeMap[type].extname,
-                        newFileName: `${originFileName}${FileTypeMap[type].extname}`,
+                        newExtname: FileTypeMap[type!].extname!,
+                        newFileName: `${originFileName}${FileTypeMap[type!].extname}`,
                         toFormat: type as FileTypeForSharp
                     }));
 
@@ -165,13 +165,13 @@ const afterUploadPlugins: IPlugin = {
 
         //* 构建outputPackinfo
         let outputPackinfo: IPackImgInfo[] = sourceImageInfos.map(source => {
-            const transformerPackInfo: ITransformInfo[] = source._packInfo;
+            const transformerPackInfo: ITransformInfo[] = source._packInfo!;
             const subImageInfos: ICustomImgInfo[] = (ctx.output as ICustomImgInfo[]).filter(p => p._isSubImage && p._sourceFileName == source.fileName);
             const imgUrlList = transformerPackInfo.map(t => {
-                const sub = subImageInfos.find(p => p.fileName == t.newFileName);
+                const sub = subImageInfos.find(p => p.fileName == t.newFileName)!;
                 return {
-                    imgUrl: sub.imgUrl,
-                    imgWebType: FileTypeMap[t.toFormat].webType
+                    imgUrl: sub.imgUrl!,
+                    imgWebType: FileTypeMap[t.toFormat].webType!
                 };
             });
             const {
@@ -181,7 +181,7 @@ const afterUploadPlugins: IPlugin = {
             return {
                 _packInfo: {
                     imageList: imgUrlList,
-                    sourceImageUrl: source.imgUrl
+                    sourceImageUrl: source.imgUrl!
                 },
                 ...newSource
             };

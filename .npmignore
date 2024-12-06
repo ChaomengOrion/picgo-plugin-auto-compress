@@ -10,3 +10,4 @@ src/
 .git/
 .github/
 images/
+.test/

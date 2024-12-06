@@ -17,8 +17,8 @@ export type FileTypeForSharp = FileType.avif | FileType.webp | FileType.jpeg | F
 
 export interface IFileTypeInfo {
     alias: string,
-    extname: string,
-    webType: string,
+    extname: string | null,
+    webType: string | null,
     otherExtnames?: string[]
 }
 
@@ -50,10 +50,10 @@ export enum OutputFormat {
 }
 
 export interface IConfig {
-    firstFileType?: FileType,
+    firstFileType: FileType,
     secondFileType?: FileType,
     thirdFileType?: FileType,
-    outputFormat?: OutputFormat
+    outputFormat: OutputFormat
     //whenSameType
     //hanleHdr
 }
